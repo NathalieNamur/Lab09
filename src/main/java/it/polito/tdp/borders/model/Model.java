@@ -1,13 +1,16 @@
 package it.polito.tdp.borders.model;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.jgrapht.Graph;
 import org.jgrapht.alg.connectivity.ConnectivityInspector;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
+import org.jgrapht.traverse.DepthFirstIterator;
 
 import it.polito.tdp.borders.db.BordersDAO;
 
@@ -74,5 +77,45 @@ public class Model {
 		return ci.connectedSets().size();
 	}
 
+	
+	//----------------------------------------------------------------------
+	
+	
+	//METODO CHE RESTITUISCE IL SET DEI VERTICI DEL GRAFO:
+	public Set<Country> getVertici(){
+		return grafo.vertexSet();
+	}
 
+	
+	//METODO CHE RESTITUISCE LA COMPONENTE CONNESSA DEL GRAFO
+	//(CORRISPONDENTE AL VERTICE DATO):
+	public Set<Country> getComponenteConnessa(Country vertice) {
+		
+		//Per ottenere la componente connessa del grafo	
+		//corrispondente al vertice dato, è necessario:
+		
+		//visitare il grafo partendo dal vertice in questione
+		//e salvare i vertici man mano visitati in un set.
+		
+		
+		//Set di vertici visitati: 
+		Set<Country> visitati = new HashSet<>();
+		
+		
+		//Visita del grafo:
+		
+		//-iteratore:
+		DepthFirstIterator<Country,DefaultEdge> it = 
+				new DepthFirstIterator<Country,DefaultEdge>(this.grafo, vertice);
+		
+		//-finchè l'iteratore trova vertici successivi,
+		//questi sono da considerare:
+		while (it.hasNext()) {
+			visitati.add(it.next());
+		}
+		
+		return visitati; 
+	}
+	
+	
 }

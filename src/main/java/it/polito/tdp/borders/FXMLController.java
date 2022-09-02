@@ -10,6 +10,7 @@ import it.polito.tdp.borders.model.Country;
 import it.polito.tdp.borders.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
@@ -24,6 +25,10 @@ public class FXMLController {
     @FXML
     private URL location;
 
+
+    @FXML
+    private ComboBox<Country> cmbStati;
+    
     @FXML
     private TextField txtAnno;
 
@@ -69,6 +74,11 @@ public class FXMLController {
 			//b.CREARE IL GRAFO CORRISPONDENTE ALL'ANNO INSERITO:
 			model.creaGrafo(anno);
 			
+			//NB:
+			//Una volta creato il grafo è necessario anche popolare
+			//la tendina corrispondente agli stati vertici:
+			cmbStati.getItems().addAll(model.getVertici());
+			
 			
 			//c.STAMPARE L'ELENCO DEGLI STATI (VERTICI DEL GRAFO),
 			//INDICANDO PER CIASCUNO IL NUMERO DI STATI CONFINANTI (GRADO VERTICE):
@@ -91,6 +101,45 @@ public class FXMLController {
     }
 
     
+    @FXML
+    void doStatiRaggiungibili(ActionEvent event) {
+    	
+    	txtResult.clear();
+    	
+    	
+    	//PERMETTERE DI VISUALIZZARE LA LISTA DI TUTTI GLI STATI RAGGIUNGIBILI
+    	//NEL GRAFO A PARTIRE DA QUELLO DATO, OSSIA LA COMPONENTE CONNESSA
+    	//DEL GRAFO CORRISPONDENTE A UN DATO VERTICE:
+    	
+    	
+    	Country vertice = cmbStati.getValue();
+    	
+    	if (cmbStati.getItems().isEmpty()) {
+			txtResult.setText("ERRORE: Creare prima un grafo.");
+			return;
+    	}
+		
+    	else if(vertice == null) {
+    		txtResult.setText("ERRORE: Selezionare uno stato.");
+    		return;
+    	}
+    	
+    	
+    	try {
+    		
+    		Set<Country> verticiRaggiungibili = model.getComponenteConnessa(vertice);
+		
+    		for (Country c : verticiRaggiungibili)
+    			txtResult.appendText(c+"\n");
+    		
+    	} catch (RuntimeException e) {
+			txtResult.setText("ERRORE!!");
+			return;
+		}
+		
+    }
+    
+    
     
     @FXML
     void initialize() {
@@ -103,4 +152,6 @@ public class FXMLController {
     public void setModel(Model model) {
     	this.model = model;
     }
+    
+    
 }
